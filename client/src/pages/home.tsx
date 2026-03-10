@@ -400,20 +400,25 @@ export default function Home() {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             transition={{ duration: 1.2, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
           >
-            {/* Decorative elements behind image */}
-            <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent z-20 pointer-events-none h-32 bottom-0 top-auto" />
+            {/* Decorative glow behind image */}
             <div className="absolute -inset-4 bg-[#E8FF00]/5 blur-[100px] z-0 rounded-full" />
             
-            <img 
-              src={PHOTO} 
-              alt="Ruan Fouche Portrait" 
-              className="relative z-10 w-[85%] sm:w-[70%] lg:w-full object-contain object-bottom drop-shadow-[0_20px_50px_rgba(0,0,0,0.5)] max-h-[60vh] lg:max-h-[85vh]"
-              style={{
-                filter: "contrast(1.1) saturate(1.1)",
-                maskImage: "linear-gradient(to top, transparent 0%, black 15%)",
-                WebkitMaskImage: "linear-gradient(to top, transparent 0%, black 15%)",
-              }}
-            />
+            {/* Photo container with rounded corners and border */}
+            <div className="relative z-10 w-[85%] sm:w-[70%] lg:w-full rounded-3xl lg:rounded-[4rem] overflow-hidden border-2 border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.4)] max-h-[60vh] lg:max-h-[85vh] flex flex-col">
+              <img 
+                src={PHOTO} 
+                alt="Ruan Fouche Portrait" 
+                className="w-full h-full object-cover object-top"
+                style={{
+                  filter: "contrast(1.1) saturate(1.1)",
+                }}
+                loading="lazy"
+              />
+              {/* Gradient overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent" />
+              {/* Bottom fade overlay */}
+              <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-[#050505] via-[#050505]/70 to-transparent" />
+            </div>
           </motion.div>
           
         </div>
@@ -502,7 +507,7 @@ export default function Home() {
               { title: "EMPLOYEE RELATIONS", desc: "Fostering positive workplace environments through conflict resolution and policy development." },
               { title: "ORGANIZATIONAL BEHAVIOR", desc: "Analyzing how individuals and teams interact within corporate structures." },
               { title: "LABOUR LEGISLATION", desc: "Understanding the framework of SA employment laws (BCEA, LRA, EEA)." },
-              { title: "PERFORMANCE MGT", desc: "Systems and processes designed to evaluate, develop, and reward contributions." },
+              { title: "PERFORMANCE MANAGEMENT", desc: "Systems and processes designed to evaluate, develop, and reward contributions." },
               { title: "STRATEGIC HR", desc: "Aligning human capital initiatives directly with broader business objectives." }
             ].map((skill, i) => (
               <motion.div
