@@ -1,0 +1,1105 @@
+import { useEffect, useState } from "react";
+import { motion, AnimatePresence, useScroll, useSpring, useTransform } from "framer-motion";
+import { ArrowUpRight, ChevronDown } from "lucide-react";
+
+const PHOTO = "/ruan.png";
+
+const titles = [
+  "BCOM HR MANAGEMENT STUDENT",
+  "SABPP STUDENT MEMBER",
+  "NWU VANDERBIJLPARK",
+  "STRATEGIC HR THINKER"
+];
+
+const Typewriter = ({ text }: { text: string }) => {
+  const [displayedText, setDisplayedText] = useState("");
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    setDisplayedText("");
+    setIndex(0);
+  }, [text]);
+
+  useEffect(() => {
+    if (index < text.length) {
+      const timeout = setTimeout(() => {
+        setDisplayedText((prev) => prev + text[index]);
+        setIndex((prev) => prev + 1);
+      }, 35);
+      return () => clearTimeout(timeout);
+    }
+  }, [index, text]);
+
+  return (
+    <span className="font-mono uppercase tracking-widest text-sm">
+      {displayedText}
+      <span
+        style={{
+          display: "inline-block",
+          width: "8px",
+          height: "14px",
+          background: "#E8FF00",
+          marginLeft: "4px",
+          verticalAlign: "middle",
+          animation: "blink 1s step-end infinite"
+        }}
+      />
+    </span>
+  );
+};
+
+const Ticker = () => {
+  const items = [
+    "EMPLOYEE RELATIONS",
+    "TALENT ACQUISITION",
+    "HUMAN CAPITAL",
+    "LABOUR LAW",
+    "STRATEGIC HR",
+    "PEOPLE MANAGEMENT",
+    "CONFLICT RESOLUTION",
+  ];
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.6 }}
+      style={{
+        background: "linear-gradient(90deg, #E8FF00 0%, #D4E600 100%)",
+        borderTop: "2px solid rgba(0,0,0,0.1)",
+        borderBottom: "2px solid rgba(0,0,0,0.1)",
+        overflow: "hidden",
+        padding: "12px 0",
+        position: "relative",
+      }}
+    >
+      <motion.div
+        animate={{ x: ["0%", "-50%"] }}
+        transition={{ duration: 25, ease: "linear", repeat: Infinity }}
+        style={{ display: "flex", gap: "0", whiteSpace: "nowrap" }}
+      >
+        {[...items, ...items, ...items, ...items].map((item, i) => (
+          <span
+            key={i}
+            style={{
+              fontFamily: "'Space Mono', monospace",
+              fontSize: "12px",
+              fontWeight: 700,
+              color: "#000",
+              letterSpacing: "0.1em",
+              padding: "0 32px",
+            }}
+          >
+            {item} ·
+          </span>
+        ))}
+      </motion.div>
+    </motion.div>
+  );
+};
+
+const slideUp = {
+  initial: { y: 60, opacity: 0 },
+  whileInView: { y: 0, opacity: 1 },
+  viewport: { once: true, margin: "-100px" },
+  transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] }
+};
+
+const NAV_ITEMS = ["ABOUT", "CAPABILITIES", "CREDENTIALS", "CONTACT"];
+
+export default function Home() {
+  const [activeTitle, setActiveTitle] = useState(0);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { scrollYProgress } = useScroll();
+  const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
+  const opacity = useTransform(scrollYProgress, [0, 0.1], [1, 0.8]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveTitle((prev) => (prev + 1) % titles.length);
+    }, 4500);
+    return () => clearInterval(interval);
+  }, []);
+
+  const scrollTo = (id: string) => {
+    setMobileMenuOpen(false);
+    document.getElementById(id.toLowerCase())?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  return (
+    <div
+      style={{
+        background: "#0A0A0A",
+        color: "#F5F5F0",
+        minHeight: "100vh",
+        fontFamily: "'Space Mono', monospace",
+        overflowX: "hidden",
+      }}
+    >
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Bebas+Neue&display=swap');
+        @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-8px); } }
+        @keyframes glow { 0%, 100% { box-shadow: 0 0 20px rgba(232,255,0,0.3); } 50% { box-shadow: 0 0 40px rgba(232,255,0,0.5); } }
+        ::selection { background: #E8FF00; color: #000; }
+        * { box-sizing: border-box; }
+        .progress-bar {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 3px;
+          background: linear-gradient(90deg, #E8FF00 0%, #D4E600 100%);
+          transform-origin: left;
+          z-index: 1000;
+          box-shadow: 0 0 20px rgba(232,255,0,0.4);
+        }
+        .display { font-family: 'Bebas Neue', sans-serif; }
+        .nav-item { 
+          position: relative; 
+          overflow: hidden;
+          cursor: pointer;
+          padding: 6px 0;
+          font-weight: 500;
+          letter-spacing: 0.05em;
+        }
+        .nav-item::after {
+          content: '';
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          width: 0%;
+          height: 2px;
+          background: #E8FF00;
+          transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .nav-item:hover::after { width: 100%; }
+        .cred-row {
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          align-items: flex-start;
+          padding: 30px 0;
+          border-bottom: 1px solid rgba(255,255,255,0.08);
+          cursor: pointer;
+          transition: all 0.3s ease;
+          gap: 16px;
+          position: relative;
+        }
+        .cred-row::before {
+          content: '';
+          position: absolute;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          height: 1px;
+          background: linear-gradient(90deg, #E8FF00 0%, transparent 100%);
+          transform: scaleX(0);
+          transform-origin: left;
+          transition: transform 0.3s ease;
+        }
+        @media (min-width: 768px) {
+          .cred-row {
+            flex-direction: row;
+            align-items: center;
+            padding: 40px 0;
+            gap: 0;
+          }
+        }
+        .cred-row:hover {
+          border-color: rgba(232,255,0,0.3);
+          transform: translateX(8px);
+        }
+        .cred-row:hover::before {
+          transform: scaleX(1);
+        }
+        .cred-row:hover .cred-title { 
+          color: #E8FF00;
+          text-shadow: 0 0 20px rgba(232,255,0,0.3);
+        }
+        .skill-tag {
+          border: 1px solid rgba(255,255,255,0.15);
+          padding: 8px 16px;
+          font-family: 'Space Mono', monospace;
+          font-size: 10px;
+          letter-spacing: 0.1em;
+          text-transform: uppercase;
+          transition: all 0.25s ease;
+          cursor: pointer;
+          color: rgba(255,255,255,0.7);
+          position: relative;
+          overflow: hidden;
+          display: inline-block;
+        }
+        .skill-tag::before {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background: rgba(232,255,0,0.1);
+          transform: translateX(-100%);
+          transition: transform 0.3s ease;
+        }
+        @media (min-width: 768px) {
+          .skill-tag {
+            padding: 10px 20px;
+            font-size: 11px;
+            letter-spacing: 0.15em;
+          }
+        }
+        .skill-tag:hover {
+          border-color: #E8FF00;
+          color: #E8FF00;
+          background: rgba(232,255,0,0.04);
+          transform: translateY(-2px);
+        }
+        .skill-tag:hover::before {
+          transform: translateX(0);
+        }
+        .contact-btn {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 16px 24px;
+          border: 2px solid rgba(255,255,255,0.15);
+          font-family: 'Space Mono', monospace;
+          font-size: 12px;
+          letter-spacing: 0.15em;
+          color: rgba(255,255,255,0.7);
+          cursor: pointer;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          background: transparent;
+          width: 100%;
+          text-transform: uppercase;
+          position: relative;
+          overflow: hidden;
+        }
+        .contact-btn::before {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(45deg, transparent, rgba(232,255,0,0.1), transparent);
+          transform: translateX(-100%);
+          transition: transform 0.5s ease;
+        }
+        @media (min-width: 768px) {
+          .contact-btn {
+            min-width: 320px;
+            width: auto;
+            padding: 20px 32px;
+            font-size: 13px;
+            letter-spacing: 0.2em;
+          }
+        }
+        .contact-btn:hover {
+          border-color: #E8FF00;
+          color: #E8FF00;
+          background: rgba(232,255,0,0.05);
+          transform: translateY(-2px);
+          box-shadow: 0 8px 24px rgba(232,255,0,0.15);
+        }
+        .contact-btn:hover::before {
+          transform: translateX(100%);
+        }
+        .mobile-menu {
+          position: fixed;
+          top: 60px;
+          left: 0;
+          right: 0;
+          background: linear-gradient(to bottom, rgba(10,10,10,0.99), rgba(10,10,10,0.98));
+          border-bottom: 1px solid rgba(232,255,0,0.2);
+          z-index: 40;
+          animation: slideDown 0.3s ease-out;
+          backdrop-filter: blur(10px);
+        }
+        .mobile-menu button {
+          display: block;
+          width: 100%;
+          padding: 16px;
+          text-align: left;
+          background: none;
+          border: none;
+          color: rgba(255,255,255,0.7);
+          font-family: 'Space Mono', monospace;
+          font-size: 12px;
+          letter-spacing: 0.15em;
+          cursor: pointer;
+          border-bottom: 1px solid rgba(255,255,255,0.05);
+          transition: all 0.2s ease;
+          position: relative;
+          overflow: hidden;
+        }
+        .mobile-menu button::before {
+          content: '';
+          position: absolute;
+          left: 0;
+          top: 0;
+          height: 100%;
+          width: 3px;
+          background: #E8FF00;
+          transform: translateX(-3px);
+          transition: transform 0.2s ease;
+        }
+        .mobile-menu button:hover {
+          color: #E8FF00;
+          background: rgba(232,255,0,0.05);
+          padding-left: 24px;
+        }
+        .mobile-menu button:hover::before {
+          transform: translateX(0);
+        }
+        .hamburger {
+          display: none;
+          flex-direction: column;
+          gap: 5px;
+          cursor: pointer;
+          background: none;
+          border: none;
+          padding: 0;
+          z-index: 50;
+        }
+        @media (max-width: 767px) {
+          .hamburger {
+            display: flex;
+          }
+        }
+        .hamburger span {
+          width: 24px;
+          height: 2px;
+          background: #E8FF00;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .hamburger.open span:nth-child(1) {
+          transform: rotate(45deg) translate(10px, 10px);
+        }
+        .hamburger.open span:nth-child(2) {
+          opacity: 0;
+        }
+        .hamburger.open span:nth-child(3) {
+          transform: rotate(-45deg) translate(8px, -8px);
+        }
+        .section-divider {
+          height: 1px;
+          background: linear-gradient(90deg, transparent, rgba(232,255,0,0.2), transparent);
+        }
+        .noise {
+          position: fixed;
+          inset: 0;
+          pointer-events: none;
+          z-index: 999;
+          opacity: 0.015;
+          background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+        }
+      `}</style>
+
+      <div className="noise" />
+      <motion.div className="progress-bar" style={{ scaleX }} />
+
+      {/* Fixed Nav */}
+      <nav
+        className="px-6 md:px-12 py-5 md:py-6 flex justify-between items-center fixed top-0 left-0 right-0 z-40 backdrop-blur-sm"
+        style={{
+          background: "linear-gradient(to bottom, rgba(10,10,10,0.97) 0%, rgba(10,10,10,0.8) 100%)",
+          borderBottom: "1px solid rgba(232,255,0,0.1)",
+        }}
+      >
+        <motion.span
+          className="display"
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.5 }}
+          style={{ fontSize: "24px", letterSpacing: "0.08em", color: "#E8FF00", fontWeight: 700 }}
+        >
+          RF
+        </motion.span>
+        <div className="hidden md:flex gap-12">
+          {NAV_ITEMS.map((item, i) => (
+            <motion.button
+              key={item}
+              className="nav-item"
+              onClick={() => scrollTo(item)}
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.1, duration: 0.5 }}
+              style={{
+                background: "none",
+                border: "none",
+                color: "rgba(255,255,255,0.5)",
+                fontFamily: "'Space Mono', monospace",
+                fontSize: "11px",
+                letterSpacing: "0.2em",
+                cursor: "pointer",
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = "#E8FF00")}
+              onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.5)")}
+            >
+              {item}
+            </motion.button>
+          ))}
+        </div>
+        <button
+          className={`hamburger ${mobileMenuOpen ? "open" : ""}`}
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          style={{
+            color: "#E8FF00",
+          }}
+        >
+          <span />
+          <span />
+          <span />
+        </button>
+      </nav>
+
+      {/* Mobile Menu */}
+      {mobileMenuOpen && (
+        <div className="mobile-menu">
+          {NAV_ITEMS.map((item, i) => (
+            <motion.button
+              key={item}
+              onClick={() => scrollTo(item)}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: i * 0.05 }}
+            >
+              {item}
+            </motion.button>
+          ))}
+        </div>
+      )}
+
+      {/* ── HERO ── */}
+      <section
+        className="px-6 md:px-12 pt-40 pb-16 md:pt-24 md:pb-16 flex flex-col justify-end relative overflow-hidden h-[100dvh]"
+      >
+        {/* Background grid */}
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            backgroundImage:
+              "linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px)",
+            backgroundSize: "100px 100px",
+            pointerEvents: "none",
+          }}
+        />
+
+        {/* Large background text */}
+        <div
+          className="display hidden md:block"
+          style={{
+            position: "absolute",
+            top: "40%",
+            left: "6%",
+            transform: "translateY(-50%)",
+            fontSize: "clamp(120px, 22vw, 320px)",
+            lineHeight: 0.8,
+            color: "rgba(232,255,0,0.08)",
+            pointerEvents: "none",
+            userSelect: "none",
+            letterSpacing: "-0.02em",
+          }}
+        >
+          <div>RUAN</div>
+          <div>FOUCHE</div>
+        </div>
+
+        {/* Foreground name + meta row */}
+        <motion.div
+          initial={{ y: 100, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
+          className="relative z-10"
+        >
+          <div>
+            <div
+              className="display"
+              style={{
+                fontSize: "clamp(50px, 15vw, 200px)",
+                lineHeight: 0.75,
+                letterSpacing: "-0.01em",
+                color: "#F5F5F0",
+              }}
+            >
+              <div>RUAN</div>
+              <div style={{ position: "relative", display: "inline-block", wordBreak: "break-word" }}>
+                FOUCHE
+                <motion.div
+                  initial={{ scaleX: 0 }}
+                  animate={{ scaleX: 1 }}
+                  transition={{ delay: 0.5, duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+                  style={{
+                    position: "absolute",
+                    bottom: "10%",
+                    left: 0,
+                    right: 0,
+                    height: "clamp(3px, 1vw, 5px)",
+                    background: "#E8FF00",
+                    transformOrigin: "left",
+                    boxShadow: "0 0 20px rgba(232,255,0,0.4)",
+                  }}
+                />
+              </div>
+            </div>
+
+            <div style={{ marginTop: "24px", minHeight: "28px" }} className="md:mt-8">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeTitle}
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -15 }}
+                  transition={{ duration: 0.5 }}
+                  style={{ color: "#E8FF00" }}
+                >
+                  <Typewriter text={titles[activeTitle]} />
+                </motion.div>
+              </AnimatePresence>
+            </div>
+
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1.4, duration: 0.6 }}
+              className="flex-col md:flex-row gap-4 md:gap-8 mt-6 md:mt-5 flex"
+              style={{
+                fontSize: "10px",
+                letterSpacing: "0.22em",
+                color: "rgba(255,255,255,0.3)",
+              }}
+            >
+              <div className="flex gap-4 md:gap-8">
+                <motion.span
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 1.5 }}
+                >
+                  YEAR_01
+                </motion.span>
+                <motion.span
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 1.6 }}
+                >
+                  BCOM HR
+                </motion.span>
+              </div>
+              <motion.span
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 1.7 }}
+                style={{ color: "#E8FF00" }}
+              >
+                AVAILABLE
+              </motion.span>
+            </motion.div>
+          </div>
+        </motion.div>
+
+        {/* Photo */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9, rotate: -2 }}
+          animate={{ opacity: 1, scale: 1, rotate: 0 }}
+          transition={{ delay: 0.6, duration: 1.3, ease: [0.16, 1, 0.3, 1] }}
+          className="absolute right-[-20px] md:right-16 bottom-0 overflow-hidden z-[5] w-[280px] md:w-[clamp(220px,22vw,340px)] opacity-50 md:opacity-100"
+          style={{
+            maxHeight: "78vh",
+            filter: "drop-shadow(0 0 30px rgba(232,255,0,0.15))",
+          }}
+        >
+          <div
+            style={{
+              position: "absolute",
+              bottom: 0,
+              right: "-12px",
+              width: "3px",
+              height: "75%",
+              background: "linear-gradient(180deg, #E8FF00 0%, rgba(232,255,0,0.2) 100%)",
+              boxShadow: "0 0 20px rgba(232,255,0,0.3)",
+            }}
+            className="hidden md:block"
+          />
+          <img
+            src={PHOTO}
+            alt="Ruan Fouche"
+            style={{
+              width: "100%",
+              display: "block",
+              objectFit: "cover",
+              objectPosition: "top",
+              filter: "contrast(1.1) brightness(1.05)",
+              maskImage: "linear-gradient(to top, transparent 0%, black 25%)",
+              WebkitMaskImage: "linear-gradient(to top, transparent 0%, black 25%)",
+            }}
+          />
+        </motion.div>
+
+        {/* Scroll hint */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 2.2, duration: 0.6 }}
+          className="absolute bottom-6 md:bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 z-10"
+        >
+          <span style={{ fontSize: "10px", letterSpacing: "0.15em", color: "rgba(255,255,255,0.3)", textTransform: "uppercase" }}>Scroll</span>
+          <motion.div
+            animate={{ y: [0, 6, 0] }}
+            transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
+            style={{
+              width: "1px",
+              height: "40px",
+              background: "linear-gradient(to bottom, transparent, rgba(232,255,0,0.4), transparent)",
+            }}
+          />
+        </motion.div>
+      </section>
+
+      {/* Ticker */}
+      <Ticker />
+
+      {/* ── ABOUT ── */}
+      <section
+        id="about"
+        className="px-6 md:px-12 py-20 md:py-32 relative overflow-hidden"
+        style={{
+          background: "linear-gradient(135deg, rgba(232,255,0,0.02) 0%, transparent 100%)",
+        }}
+      >
+        <div className="section-divider absolute top-0 left-0 right-0" />
+        <div
+          className="display"
+          style={{
+            position: "absolute",
+            top: "10%",
+            right: "-40px",
+            fontSize: "clamp(100px, 18vw, 300px)",
+            color: "rgba(232,255,0,0.06)",
+            lineHeight: 1,
+            userSelect: "none",
+            pointerEvents: "none",
+            fontWeight: 700,
+          }}
+        >
+          01
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 items-start relative z-10">
+          <motion.div {...slideUp}>
+            <div
+              style={{
+                fontSize: "11px",
+                letterSpacing: "0.25em",
+                color: "#E8FF00",
+                marginBottom: "32px",
+                textTransform: "uppercase",
+                fontWeight: 600,
+              }}
+            >
+              About Me
+            </div>
+            <p
+              style={{
+                fontFamily: "'Space Mono', monospace",
+                fontSize: "clamp(14px, 1.4vw, 18px)",
+                lineHeight: 1.9,
+                color: "rgba(255,255,255,0.8)",
+                fontStyle: "italic",
+              }}
+            >
+              First-year BCom HR Management student at NWU Vanderbijlpark.
+              Recipient of the NWU Young Eagles Recruitment Bursary.
+              Registered SABPP Student Member. Passionate about building ethical,
+              high-performing workplaces. Background in competitive debating through
+              the ATKV programme, bringing strong research, argumentation, and
+              communication skills into HR practice. Interests in Employee Relations,
+              Recruitment and Talent Acquisition, and Human Capital Strategy.
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-2 gap-4">
+            {[
+              { value: "2029", label: "Graduation Year" },
+              { value: "SABPP", label: "Registered Member" },
+              { value: "YR.01", label: "Current Year" },
+              { value: "BCom", label: "Degree Track" },
+            ].map((stat, i) => (
+              <motion.div
+                key={i}
+                {...slideUp}
+                transition={{ delay: i * 0.1, duration: 0.8 }}
+                style={{
+                  borderLeft: "3px solid #E8FF00",
+                  padding: "20px",
+                  background: "linear-gradient(135deg, rgba(232,255,0,0.08) 0%, rgba(232,255,0,0.02) 100%)",
+                  border: "1px solid rgba(232,255,0,0.15)",
+                  borderRadius: "4px",
+                  position: "relative",
+                  overflow: "hidden",
+                  cursor: "pointer",
+                  transition: "all 0.3s ease",
+                }}
+                whileHover={{
+                  y: -4,
+                  boxShadow: "0 8px 24px rgba(232,255,0,0.1)",
+                }}
+              >
+                <div
+                  className="display"
+                  style={{ fontSize: "clamp(24px, 4vw, 48px)", color: "#E8FF00", lineHeight: 1, fontWeight: 700 }}
+                >
+                  {stat.value}
+                </div>
+                <div
+                  style={{
+                    fontSize: "9px",
+                    letterSpacing: "0.15em",
+                    color: "rgba(255,255,255,0.35)",
+                    marginTop: "12px",
+                    textTransform: "uppercase",
+                  }}
+                  className="md:text-[10px] md:tracking-[0.2em]"
+                >
+                  {stat.label}
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+        <div className="section-divider absolute bottom-0 left-0 right-0" />
+      </section>
+
+      {/* ── CAPABILITIES ── */}
+      <section
+        id="capabilities"
+        className="px-6 md:px-12 py-20 md:py-32 relative overflow-hidden"
+        style={{
+          background: "linear-gradient(135deg, rgba(232,255,0,0.01) 0%, transparent 100%)",
+        }}
+      >
+        <div className="section-divider absolute top-0 left-0 right-0" />
+        <div
+          className="display"
+          style={{
+            position: "absolute",
+            top: "10%",
+            right: "-40px",
+            fontSize: "clamp(100px, 18vw, 300px)",
+            color: "rgba(232,255,0,0.06)",
+            lineHeight: 1,
+            userSelect: "none",
+            pointerEvents: "none",
+            fontWeight: 700,
+          }}
+        >
+          02
+        </div>
+
+        <motion.div {...slideUp} className="relative z-10 mb-16">
+          <div
+            style={{
+              fontSize: "11px",
+              letterSpacing: "0.25em",
+              color: "#E8FF00",
+              marginBottom: "24px",
+              textTransform: "uppercase",
+              fontWeight: 600,
+            }}
+          >
+            Capabilities
+          </div>
+          <h2
+            className="display md:mb-[64px]"
+            style={{
+              fontSize: "clamp(50px, 10vw, 130px)",
+              color: "rgba(255,255,255,0.12)",
+              marginBottom: "48px",
+              letterSpacing: "-0.01em",
+              WebkitTextStroke: "1px rgba(232,255,0,0.25)",
+              fontWeight: 700,
+            }}
+          >
+            WHAT I BRING
+          </h2>
+        </motion.div>
+
+        <div className="grid grid-cols-1 md:grid-cols-[1fr_360px] gap-12 md:gap-16 relative z-10">
+          <div className="flex flex-wrap gap-2 md:gap-3 content-start">
+            {[
+              "Labour Law",
+              "People Management",
+              "Recruitment & Selection",
+              "Employee Relations",
+              "Talent Strategy",
+              "Human Capital",
+              "Report Writing",
+              "Argumentation",
+              "Research",
+              "Conflict Resolution",
+            ].map((skill, i) => (
+              <motion.span
+                key={i}
+                {...slideUp}
+                transition={{ delay: i * 0.05, duration: 0.8 }}
+                className="skill-tag"
+                whileHover={{ y: -2 }}
+              >
+                {skill}
+              </motion.span>
+            ))}
+          </div>
+
+          <motion.div
+            {...slideUp}
+            transition={{ delay: 0.2, duration: 0.8 }}
+            style={{
+              border: "1px solid rgba(232,255,0,0.15)",
+              padding: "24px",
+              background: "linear-gradient(135deg, rgba(232,255,0,0.05) 0%, rgba(232,255,0,0.01) 100%)",
+              alignSelf: "start",
+              borderRadius: "4px",
+              position: "relative",
+              overflow: "hidden",
+            }}
+            className="md:p-[32px]"
+            whileHover={{
+              boxShadow: "0 8px 24px rgba(232,255,0,0.1)",
+            }}
+          >
+            <div
+              style={{
+                fontSize: "10px",
+                letterSpacing: "0.3em",
+                color: "#E8FF00",
+                marginBottom: "28px",
+                textTransform: "uppercase",
+                fontWeight: 600,
+              }}
+            >
+              System.Readout
+            </div>
+            {[
+              ["TOOLS_01", "MS OFFICE"],
+              ["TOOLS_02", "GOOGLE WORKSPACE"],
+              ["LANG_01", "AFRIKAANS (NATIVE)"],
+              ["LANG_02", "ENGLISH (NATIVE)"],
+            ].map(([key, val], i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, x: -10 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ delay: i * 0.08 }}
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "1fr 1fr",
+                  borderBottom: "1px solid rgba(232,255,0,0.1)",
+                  paddingBottom: "14px",
+                  marginBottom: "14px",
+                  fontSize: "10px",
+                  letterSpacing: "0.1em",
+                }}
+                className="md:text-[11px]"
+              >
+                <span style={{ color: "rgba(255,255,255,0.3)" }}>{key}:</span>
+                <span style={{ color: "#E8FF00", fontWeight: 500 }}>{val}</span>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+        <div className="section-divider absolute bottom-0 left-0 right-0" />
+      </section>
+
+      {/* ── CREDENTIALS ── */}
+      <section
+        id="credentials"
+        className="px-6 md:px-12 pt-20 md:pt-24 relative overflow-hidden"
+      >
+        <div className="section-divider absolute top-0 left-0 right-0" />
+        <motion.div {...slideUp}>
+          <div
+            style={{
+              fontSize: "11px",
+              letterSpacing: "0.25em",
+              color: "#E8FF00",
+              marginBottom: "32px",
+              textTransform: "uppercase",
+              fontWeight: 600,
+            }}
+            className="md:mb-[48px]"
+          >
+            Credentials
+          </div>
+        </motion.div>
+
+        <div className="relative z-10">
+          {[
+            {
+              num: "01",
+              inst: "NWU VANDERBIJLPARK",
+              detail: "YOUNG EAGLES RECRUITMENT BURSARY RECIPIENT",
+              year: "2025",
+            },
+            {
+              num: "02",
+              inst: "SABPP",
+              detail: "REGISTERED STUDENT MEMBER",
+              year: "2025",
+            },
+            {
+              num: "03",
+              inst: "ATKV PROGRAMME",
+              detail: "COMPETITIVE DEBATER",
+              year: "2024",
+            },
+          ].map((cred, i) => (
+            <motion.div
+              key={i}
+              {...slideUp}
+              transition={{ delay: i * 0.12, duration: 0.8 }}
+              className="cred-row"
+              whileHover={{ x: 8 }}
+            >
+              <div className="flex items-baseline gap-4 md:gap-6">
+                <span
+                  style={{
+                    fontSize: "12px",
+                    color: "rgba(232,255,0,0.4)",
+                    fontFamily: "'Space Mono', monospace",
+                    fontWeight: 700,
+                  }}
+                >
+                  {cred.num}
+                </span>
+                <span
+                  className="display cred-title"
+                  style={{
+                    fontSize: "clamp(28px, 5vw, 72px)",
+                    letterSpacing: "0.02em",
+                    lineHeight: 1,
+                    color: "#F5F5F0",
+                    transition: "all 0.3s ease",
+                    fontWeight: 700,
+                  }}
+                >
+                  {cred.inst}
+                </span>
+              </div>
+              <div className="text-left md:text-right w-full md:w-auto mt-2 md:mt-0">
+                <div
+                  style={{
+                    fontSize: "10px",
+                    letterSpacing: "0.25em",
+                    color: "rgba(255,255,255,0.4)",
+                    marginBottom: "6px",
+                    textTransform: "uppercase",
+                    fontWeight: 500,
+                  }}
+                >
+                  {cred.year}
+                </div>
+                <div
+                  style={{
+                    fontSize: "10px",
+                    letterSpacing: "0.15em",
+                    color: "rgba(255,255,255,0.5)",
+                    textTransform: "uppercase",
+                    maxWidth: "280px",
+                  }}
+                  className="md:text-[11px]"
+                >
+                  {cred.detail}
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+        <div className="section-divider absolute bottom-0 left-0 right-0" />
+      </section>
+
+      {/* ── CONTACT ── */}
+      <section
+        id="contact"
+        className="px-6 md:px-12 py-24 md:py-[140px] relative overflow-hidden min-h-[60vh] flex flex-col justify-center"
+        style={{
+          background: "linear-gradient(135deg, rgba(232,255,0,0.03) 0%, transparent 100%)",
+        }}
+      >
+        <div
+          className="absolute right-[-100px] md:right-[-200px] top-1/2 -translate-y-1/2 w-[300px] md:w-[600px] h-[300px] md:h-[600px] border border-white/5 rounded-full pointer-events-none"
+        />
+        <div
+          className="absolute right-[-50px] md:right-[-100px] top-1/2 -translate-y-1/2 w-[200px] md:w-[400px] h-[200px] md:h-[400px] border border-[#E8FF00]/10 rounded-full pointer-events-none"
+        />
+
+        <motion.div {...slideUp} className="relative z-10">
+          <div
+            style={{
+              fontSize: "11px",
+              letterSpacing: "0.25em",
+              color: "#E8FF00",
+              marginBottom: "24px",
+              textTransform: "uppercase",
+              fontWeight: 600,
+            }}
+          >
+            Get In Touch
+          </div>
+          <h2
+            className="display md:mb-[64px]"
+            style={{
+              fontSize: "clamp(56px, 13vw, 180px)",
+              color: "#F5F5F0",
+              lineHeight: 0.9,
+              letterSpacing: "-0.01em",
+              marginBottom: "48px",
+              fontWeight: 700,
+            }}
+          >
+            LET&apos;S
+            <br />
+            <span style={{ color: "#E8FF00" }}>TALK.</span>
+          </h2>
+
+          <div className="flex flex-col sm:flex-row gap-4 flex-wrap">
+            <motion.button
+              className="contact-btn"
+              onClick={() => window.open("https://www.linkedin.com/in/ruan-fouche", "_blank")}
+              whileHover={{ y: -2 }}
+              whileTap={{ y: 0 }}
+            >
+              <span>LINKEDIN</span>
+              <ChevronDown size={16} className="ml-4 -rotate-90" />
+            </motion.button>
+            <motion.a
+              href="mailto:ruanfouche007@gmail.com"
+              className="contact-btn"
+              style={{ textDecoration: "none" }}
+              whileHover={{ y: -2 }}
+              whileTap={{ y: 0 }}
+            >
+              <span>EMAIL</span>
+              <ChevronDown size={16} className="ml-4 -rotate-90" />
+            </motion.a>
+          </div>
+        </motion.div>
+      </section>
+
+      {/* Footer */}
+      <motion.footer
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true }}
+        className="px-6 md:px-12 py-8 flex flex-col md:flex-row justify-between items-center border-t border-white/5 gap-4 md:gap-0 text-center md:text-left"
+        style={{
+          fontSize: "10px",
+          letterSpacing: "0.25em",
+          color: "rgba(255,255,255,0.15)",
+          textTransform: "uppercase",
+        }}
+      >
+        <span>RUAN FOUCHE &copy; 2026</span>
+        <span>NWU VANDERBIJLPARK, ZA</span>
+      </motion.footer>
+    </div>
+  );
+}
